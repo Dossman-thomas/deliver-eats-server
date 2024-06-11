@@ -2,7 +2,6 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import "dotenv/config";
 import mongoose from "mongoose";
-import path from "path";
 import myUserRoute from "./routes/MyUserRoute";
 
 // connect to deliverEats MongoDB
@@ -27,7 +26,7 @@ app.get("/health", async (req: Request, res: Response) => {
 app.use("/api/my/user", myUserRoute);
 
 
-// start the Express server with '0.0.0.0' as the second argument to ensure the server binds to all available network interfaces, making it accessible from outside the local machine.
+// start the Express server
 app.listen(PORT, () => {
   console.log(`API server running on port http://localhost:${PORT}`);
 });
