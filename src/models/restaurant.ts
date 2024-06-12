@@ -1,6 +1,12 @@
 import { requiredScopes } from "express-oauth2-jwt-bearer";
 import mongoose from "mongoose";
 
+const menuItemSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    price: { type: Number, required: true },
+    description: { type: String, required: true },
+});
+
 const restaurantSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, 
     restaurantName: { type: String, required: true },
@@ -12,4 +18,7 @@ const restaurantSchema = new mongoose.Schema({
     menuItems: [menuItemSchema],
     imageUrl: { type: String, required: true },
     lastUpdated: { type: Date, required: true },
-})
+});
+
+const Restaurant = mongoose.model("Restaurant", restaurantSchema);
+export default Restaurant;
