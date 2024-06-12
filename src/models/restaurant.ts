@@ -1,4 +1,3 @@
-import { requiredScopes } from "express-oauth2-jwt-bearer";
 import mongoose from "mongoose";
 
 const menuItemSchema = new mongoose.Schema({

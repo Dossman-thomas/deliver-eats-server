@@ -1,9 +1,11 @@
-import express, { Request, Response } from "express";
-import cors from "cors";
-import "dotenv/config";
-import mongoose from "mongoose";
-import myUserRoute from "./routes/MyUserRoute";
-import { v2 as cloudinary } from "cloudinary";
+// This is the main file for our Express server. It sets up the server, connects to MongoDB, and defines the routes. We also configure Cloudinary here. 
+import express, { Request, Response } from "express"; // import express and the Request and Response types
+import cors from "cors"; // import cors
+import "dotenv/config"; // import dotenv to load environment variables from the .env file
+import mongoose from "mongoose"; // import mongoose to connect to MongoDB
+import { v2 as cloudinary } from "cloudinary"; // import cloudinary to upload images
+import myUserRoute from "./routes/MyUserRoute"; // import the myUserRoute
+import myRestaurantRoute from "./routes/MyRestaurantRoute"; // import the myRestaurantRoute
 
 
 // connect to deliverEats MongoDB
@@ -32,8 +34,9 @@ app.get("/health", async (req: Request, res: Response) => {
   res.send({ message: "health okay!" });
 });
 
-// define a route handler for the user page
-app.use("/api/my/user", myUserRoute);
+// define routes
+app.use("/api/my/user", myUserRoute); // use the myUserRoute for the /api/my/user endpoint
+app.use("/api/my/restaurant", myRestaurantRoute); // use the myRestaurantRoute for the /api/my/restaurant endpoint
 
 
 // start the Express server
