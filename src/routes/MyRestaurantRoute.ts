@@ -14,7 +14,19 @@ const upload = multer({
   },
 });
 
-// /api/my/restaurant endpoint
+
+// NOTE: all routes in this file are prepended with /api/my/restaurant
+
+
+// endpoint to get the restaurant details of the logged in user.
+router.get(
+  "/",
+  jwtCheck,
+  jwtParse,
+  MyRestaurantController.getMyRestaurant
+);
+
+// /api/my/restaurant endpoint to create a new restaurant
 router.post(
   "/",
   upload.single("imageFile"),

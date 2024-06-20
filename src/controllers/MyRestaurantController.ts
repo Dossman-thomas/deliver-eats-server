@@ -3,6 +3,23 @@ import Restaurant from "../models/restaurant";
 import cloudinary from "cloudinary";
 import mongoose from "mongoose";
 
+const getMyRestaurant = async (req: Request, res: Response) => {
+  try {
+    const restaurant = await Restaurant.findOne({ user: req.userId }); // find the restaurant with the user ID of the authenticated user
+
+    if (!restaurant) {
+      res.status(404).json({ message: "Restaurant not found" }); // 404 is the status code for not found
+    }
+
+    res.status(200).json(restaurant); // 200 is the status code for OK
+  } catch (error) {
+    console.log("Error: ", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error while fetching restaurant" });
+  }
+};
+
 const createMyRestaurant = async (req: Request, res: Response) => {
   try {
     const existingRestaurant = await Restaurant.findOne({ user: req.userId });
@@ -25,7 +42,6 @@ const createMyRestaurant = async (req: Request, res: Response) => {
     await restaurant.save(); // save the restaurant to the database
 
     res.status(201).send(restaurant); // 201 is the status code for created
-
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" }); // 500 is the status code for internal server error
@@ -33,5 +49,6 @@ const createMyRestaurant = async (req: Request, res: Response) => {
 };
 
 export default {
-    createMyRestaurant,
+  getMyRestaurant,
+  createMyRestaurant,
 };
