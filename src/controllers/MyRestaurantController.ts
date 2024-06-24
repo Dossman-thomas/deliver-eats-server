@@ -28,14 +28,10 @@ const createMyRestaurant = async (req: Request, res: Response) => {
       return res.status(409).json({ message: "Restaurant already exists" }); // 409 is the status code for conflict/already exists
     }
 
-    const image = req.file as Express.Multer.File; // req.file is the image file uploaded by the user
-    const base64Image = Buffer.from(image.buffer).toString("base64"); // convert the image buffer to a base64 string
-    const dataURI = `data:${image.mimetype};base64,${base64Image}`; // create a data URI from the base64 string
-
-    const uploadResponse = await cloudinary.v2.uploader.upload(dataURI); // upload the image to Cloudinary
+    const imageUrl = await uploadImage(req.file as Express.Multer.File); // upload the image to Cloudinary and get the URL
 
     const restaurant = new Restaurant(req.body);
-    restaurant.imageUrl = uploadResponse.url; // set the imageUrl to the URL of the uploaded image
+    restaurant.imageUrl = imageUrl; // set the imageUrl to the URL of the uploaded image
     restaurant.user = new mongoose.Types.ObjectId(req.userId); // set the user field to the ID of the authenticated user
     restaurant.lastUpdated = new Date(); // set the lastUpdated field to the current date and time
 
@@ -48,7 +44,48 @@ const createMyRestaurant = async (req: Request, res: Response) => {
   }
 };
 
+const updateMyRestaurant = async (req: Request, res: Response) => {
+  try {
+    const restaurant = await Restaurant.findOne({ user: req.userId });
+
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    // backend safety measure to make sure only form fields are updated
+    restaurant.restaurantName = req.body.restaurantName;
+    restaurant.city = req.body.city;
+    restaurant.country = req.body.country;
+    restaurant.deliveryPrice = req.body.deliveryPrice;
+    restaurant.estimatedDeliveryTime = req.body.estimatedDeliveryTime;
+    restaurant.cuisines = req.body.cuisines;
+    restaurant.menuItems = req.body.menuItems;
+    restaurant.lastUpdated = new Date();
+
+    if (req.file) {
+      const imageUrl = await uploadImage(req.file as Express.Multer.File); // upload the image to Cloudinary and get the URL
+      restaurant.imageUrl = imageUrl; // set the imageUrl to the URL of the uploaded image  
+    }
+
+    await restaurant.save(); // save the updated restaurant to the database
+    res.status(200).send(restaurant);
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({ message: "Something went wrong." });
+  }
+};
+
+const uploadImage = async (file: Express.Multer.File) => {
+  const image = file; // req.file is the image file uploaded by the user
+  const base64Image = Buffer.from(image.buffer).toString("base64"); // convert the image buffer to a base64 string
+  const dataURI = `data:${image.mimetype};base64,${base64Image}`; // create a data URI from the base64 string
+
+  const uploadResponse = await cloudinary.v2.uploader.upload(dataURI); // upload the image to Cloudinary
+  return uploadResponse.url;
+};
+
 export default {
   getMyRestaurant,
   createMyRestaurant,
+  updateMyRestaurant,
 };
