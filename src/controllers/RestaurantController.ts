@@ -14,7 +14,14 @@ const searchRestaurants = async (req: Request, res: Response) => {
 
     if (cityCheck === 0) {
       // if no restaurants are available in the city
-      return res.status(404).json([]);
+      return res.status(404).json({
+        data: [],
+        pagination: {
+            total: 0,
+            page: 1,
+            pages: 1,
+        }
+      });
     }
 
     if (selectedCuisines) {
