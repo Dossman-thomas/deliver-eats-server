@@ -11,3 +11,6 @@ router.get(
   param("city").isString().trim().notEmpty().withMessage("City is required"), // validating the city parameter
   RestaurantController.searchRestaurants
 );
+
+
+export default router;

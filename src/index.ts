@@ -6,6 +6,7 @@ import mongoose from "mongoose"; // import mongoose to connect to MongoDB
 import { v2 as cloudinary } from "cloudinary"; // import cloudinary to upload images
 import myUserRoute from "./routes/MyUserRoute"; // import the myUserRoute
 import myRestaurantRoute from "./routes/MyRestaurantRoute"; // import the myRestaurantRoute
+import restaurantRoute from "./routes/RestaurantRoute"; // import the restaurantRoute
 
 
 // connect to deliverEats MongoDB
@@ -37,6 +38,7 @@ app.get("/health", async (req: Request, res: Response) => {
 // define routes
 app.use("/api/my/user", myUserRoute); // use the myUserRoute for the /api/my/user endpoint
 app.use("/api/my/restaurant", myRestaurantRoute); // use the myRestaurantRoute for the /api/my/restaurant endpoint
+app.use("/api/restaurant", restaurantRoute); // use the myRestaurantRoute for the /api/restaurant endpoint
 
 
 // start the Express server
