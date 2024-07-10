@@ -10,12 +10,26 @@ const searchRestaurant = async (req: Request, res: Response) => {
 
         let query: any = { };
         query["city"] = new RegExp(city, "i"); // case-insensitive search so user's can search for "London" or "london" and  get the same results.
-        const cityCheck = await Restaurant.countDocuments(query);
+        const cityCheck = await Restaurant.countDocuments(query); // check if any restaurants are available in the city
 
-        if (cityCheck === 0) {
-            return res.status(404).json({ message: "No restaurants found in this city" });
+        if (cityCheck === 0) { // if no restaurants are available in the city
+            return res.status(404).json([]);
         }
         
+        if(selectedCuisines){ // if user has selected cuisines
+            const cuisinesArray = selectedCuisines.split(",").map((cuisine) => new RegExp(cuisine, "i")); // case-insensitive search for cuisines
+
+            query["cuisines"] = { $all: cuisinesArray }; // find restaurants with selected cuisines
+        }
+
+        if(searchQuery){
+            const searchRegex = new RegExp(searchQuery, "i"); // case-insensitive search for search query
+            query["$or"] = [
+                { restaurantName: searchRegex },
+                { cuisines: { $in: [searchRegex] } },
+            ];
+        }
+
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal server error" });
